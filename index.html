@@ -98,7 +98,25 @@
     <script>
       function handleSubmit(event) {
         event.preventDefault();
-        window.location.href = "https://www.apexgroup.com/";
+        const form = event.target;
+        // Post the form data to the Pardot URL
+        const pardotUrl = "http://go.apexgroup.com/l/1011401/2024-10-03/23zfv";
+
+        fetch(pardotUrl, {
+          method: "POST",
+          body: new FormData(form),
+        })
+          .then((response) => {
+            // Check if submission was successful
+            if (response.ok) {
+              window.location.href = "https://www.apexgroup.com/";
+            } else {
+              alert("Submission failed. Please try again.");
+            }
+          })
+          .catch((error) => {
+            alert("Error occurred: " + error.message);
+          });
       }
     </script>
   </head>
@@ -127,7 +145,7 @@
         <input
           type="hidden"
           name="debugEmail"
-          value="v-divanshu.zinta@apexgroup.com"
+          value="shubhangi.kalaskar@apexgroup.com"
         />
 
         <div class="form-field">
