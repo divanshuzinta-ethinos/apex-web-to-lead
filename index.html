@@ -120,21 +120,18 @@
           }
         )
           .then((response) => {
-            if (response.ok) {
-              // If the request is successful, redirect to the desired URL
-              window.location.href = "https://www.apexgroup.com/";
-            } else {
-              console.error(
-                "Form submission failed with status:",
-                response.status
-              );
-              return response.text().then((text) => {
-                console.error(text);
-              });
-            }
+            console.log("Response status:", response.status); // Log response status
+            return response.text(); // Convert response to text to see if there's an error
+          })
+          .then((text) => {
+            console.log("Response text:", text); // Log response text
+            // Redirect regardless of response status
+            window.location.href = "https://www.apexgroup.com/";
           })
           .catch((error) => {
             console.error("An error occurred:", error);
+            // Redirect even if there's an error
+            // window.location.href = "https://www.apexgroup.com/";
           });
       }
     </script>
