@@ -99,39 +99,61 @@
       function handleSubmit(event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
-        // Get form data
+        // Get all form data
         const formData = new FormData(event.target);
 
-        // Convert form data to a URL-encoded string
-        const data = new URLSearchParams();
-        formData.forEach((value, key) => {
-          data.append(key, value);
-        });
+        // Prepare the data for the Web-to-Lead API
+        const apiData = new URLSearchParams(formData);
 
-        // Make the API call using fetch()
-        fetch(
+        // Prepare the data for the form handler (only first_name, last_name, email)
+        const handlerData = new URLSearchParams();
+        handlerData.append("first_name", formData.get("first_name"));
+        handlerData.append("last_name", formData.get("last_name"));
+        handlerData.append("email", formData.get("email"));
+
+        // Create the fetch promises for both API calls
+        const webToLeadPromise = fetch(
           "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
           {
             method: "POST",
-            body: data,
+            body: apiData,
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
-        )
-          .then((response) => {
-            console.log("Response status:", response.status); // Log response status
-            return response.text(); // Convert response to text to see if there's an error
+        );
+
+        const formHandlerPromise = fetch(
+          "https://go.apexgroup.com/l/1011401/2024-10-03/23zfv",
+          {
+            // Replace with your form handler URL
+            method: "POST",
+            body: handlerData,
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        );
+
+        // Use Promise.all to send both requests simultaneously
+        Promise.all([webToLeadPromise, formHandlerPromise])
+          .then((responses) => {
+            // Log both responses
+            responses.forEach((response, index) => {
+              console.log(`Response from API ${index + 1}:`, response.status);
+              return response.text();
+            });
           })
-          .then((text) => {
-            console.log("Response text:", text); // Log response text
+          .then((texts) => {
+            // Log response texts
+            texts.forEach((text, index) => {
+              console.log(`Response text from API ${index + 1}:`, text);
+            });
             // Redirect regardless of response status
             window.location.href = "https://www.apexgroup.com/";
           })
           .catch((error) => {
             console.error("An error occurred:", error);
-            // Redirect even if there's an error
-            // window.location.href = "https://www.apexgroup.com/";
           });
       }
     </script>
