@@ -99,37 +99,37 @@
       function handleSubmit(event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
-        // Get form data (assuming you have form elements with names corresponding to lead fields)
+        // Get all form data
         const formData = new FormData(event.target);
 
-        // Convert form data to a URL-encoded string for sending as POST data
-        const data = new URLSearchParams();
-        formData.forEach((value, key) => {
-          data.append(key, value);
-        });
+        // Prepare the data for the Web-to-Lead API
+        const apiData = new URLSearchParams(formData);
 
-        // Make the API call using fetch()
+        // Send the Web-to-Lead request
         fetch(
           "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
           {
             method: "POST",
-            body: data,
+            body: apiData,
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
-            }, // This will prevent CORS errors, but you won't be able to read the response
+            },
           }
         )
           .then((response) => {
-            if (response.ok) {
-              // If the request is successful, redirect to the desired URL
-              window.location.href = "https://www.apexgroup.com/";
-            } else {
-              console.error("Form submission failed");
-            }
+            console.log("Web-to-Lead Response Status:", response.status);
+            return response.text();
+          })
+          .then((text) => {
+            console.log("Web-to-Lead Response Text:", text);
+            // Redirect to the specified URL after the request
+            window.location.href = "https://www.apexgroup.com/";
           })
           .catch((error) => {
-            // Handle network or other errors
-            console.error("An error occurred:", error);
+            console.error(
+              "An error occurred while submitting Web-to-Lead:",
+              error
+            );
           });
       }
     </script>
