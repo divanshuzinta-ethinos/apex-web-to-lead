@@ -99,37 +99,39 @@
       function handleSubmit(event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
-        // Get all form data
+        // Get form data
         const formData = new FormData(event.target);
 
-        // Prepare the data for the Web-to-Lead API
-        const apiData = new URLSearchParams(formData);
+        // Convert form data to a URL-encoded string
+        const data = new URLSearchParams();
+        formData.forEach((value, key) => {
+          data.append(key, value);
+        });
 
-        // Send the Web-to-Lead request
+        // Make the API call using fetch()
         fetch(
           "https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8",
           {
             method: "POST",
-            body: apiData,
+            body: data,
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
             },
           }
         )
           .then((response) => {
-            console.log("Web-to-Lead Response Status:", response.status);
-            return response.text();
+            console.log("Response status:", response.status); // Log response status
+            return response.text(); // Convert response to text to see if there's an error
           })
           .then((text) => {
-            console.log("Web-to-Lead Response Text:", text);
-            // Redirect to the specified URL after the request
+            console.log("Response text:", text); // Log response text
+            // Redirect regardless of response status
             window.location.href = "https://www.apexgroup.com/";
           })
           .catch((error) => {
-            console.error(
-              "An error occurred while submitting Web-to-Lead:",
-              error
-            );
+            console.error("An error occurred:", error);
+            // Redirect even if there's an error
+            // window.location.href = "https://www.apexgroup.com/";
           });
       }
     </script>
